@@ -8,7 +8,7 @@ export function Header() {
     const loadingAuth: boolean = false;
 
   return (
-    <header className='w-full bg-violet-900 py-6'>
+    <header className='w-full bg-violet-900 py-6 s'>
         <div className='flex gap-2 text-amber-50 w-full max-w-7xl m-auto px-5 justify-between items-center'>
             <Link to='/' className='flex gap-2 items-center'>
                 <AiFillCar size={26}/>
