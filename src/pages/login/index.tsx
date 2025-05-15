@@ -8,11 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 const schema = z.object({
     email: z.string().email({message: 'Email inválido'})
     .nonempty({message: 'O Email é obrigatório'}),
-    password: z.string()
-    .min(8, {message: 'A senha precisa ter no mínimo 8 caracteres'})
-    .regex(/[A-Z]/, 'A senha precisa conter ao menos uma letra maiúscula')
-    .regex(/[a-z]/, 'A senha precisa conter ao menos uma letra minúscula')
-    .nonempty({message: 'Senha é obrigatória'})
+    password: z.string().nonempty({message: 'Senha é obrigatória'})
 })
 
 // Tipagem dos campos do form
@@ -38,14 +34,14 @@ export function Login() {
         </aside>
         <article className="min-h-[400px] flex flex-col py-8 px-3 justify-center w-full shadow-2xl items-center rounded-2xl  md:w-[50%] gap-8 sm:w-[480px] md:max-h-[900px] md:h-full md:shadow-none md:bg-white md:px-8 md:rounded-none">
           <h1 className="text-3xl font-medium md:text-4xl select-none">Login</h1>
-          <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit(onSubmit)}>
+          <form className="flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
             <Input type='email' placeholder='Digite seu E-mail' name='email' error={errors.email?.message} register={register}/>
 
             <Input type='password' placeholder='Digite sua senha' name='password' error={errors.password?.message} register={register}/>
 
             <button className="w-full h-12 bg-violet-950 mt-4 rounded text-amber-50 text-lg font-medium cursor-pointer">Salvar</button>
           </form>
-          <Link to='/register' className="text-gray-900 font-medium hover:text-gray-800">Don't have a count? signed up</Link>
+          <Link to='/register' className="text-gray-900 font-medium hover:text-gray-800">Não possui conta? Cadastre-se</Link>
         </article>
       </div>
   )
