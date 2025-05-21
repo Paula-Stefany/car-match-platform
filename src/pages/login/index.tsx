@@ -4,6 +4,9 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { supabase } from '../../services/supabaseConection';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 const schema = z.object({
     email: z.string().email({message: 'Email inválido'})
@@ -21,9 +24,36 @@ export function Login() {
     resolver: zodResolver(schema),
     mode: 'onChange'
   })
+  const [loginError, setLoginError] = useState<string>('');
+  const navigate = useNavigate();
 
-  function onSubmit(data: FormData){
-    console.log(data);
+  
+  async function onSubmit(userData: FormData){
+
+    setLoginError('');
+    try{
+      const { error } = await supabase.auth.signInWithPassword({
+         email: userData.email,
+         password: userData.password
+      });
+
+      if (error){
+        if (error.message == 'Invalid login credentials'){
+          setLoginError('Email ou senha incorretos');
+
+        } else {
+          setLoginError('Erro ao fazer login');
+        }
+        
+        return;
+      }
+
+      navigate('/');
+
+    } catch(err){
+      console.error('Erro: ', err);
+    }
+   
   }
 
   return (
@@ -38,6 +68,10 @@ export function Login() {
             <Input type='email' placeholder='Digite seu E-mail' name='email' error={errors.email?.message} register={register}/>
 
             <Input type='password' placeholder='Digite sua senha' name='password' error={errors.password?.message} register={register}/>
+
+            { loginError && (
+              <span className='text-red-700'>*  {loginError}</span>
+            ) }
 
             <button className="w-full h-12 bg-violet-950 mt-4 rounded text-amber-50 text-lg font-medium cursor-pointer">Salvar</button>
           </form>
