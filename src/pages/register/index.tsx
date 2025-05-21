@@ -4,6 +4,10 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { supabase } from '../../services/supabaseConection';
+import { useNavigate } from 'react-router';
+import { useState } from 'react';
+
 
 const schema = z.object({
     name: z.string().nonempty({message: "Você precisa inserir um nome"}),
@@ -26,10 +30,38 @@ export function Register() {
     resolver: zodResolver(schema),
     mode: 'onChange'
   })
+  const [registerError, setRegisterError] = useState('');
+  const navigate = useNavigate();
 
-  function onSubmit(data: FormData){
-    console.log(data);
+  
+  async function onSubmit(userData: FormData){
+
+    setRegisterError('');
+    try{
+
+      const { error } = await supabase.auth.signUp({
+      email: userData.email,
+      password: userData.password,
+      options: {
+        data: {
+          display_name: userData.name
+        }
+      }
+      });
+
+      if (error){
+        setRegisterError('Erro ao registrar usuário');
+      }
+
+      navigate('/');      
+
+    } catch(err){
+      console.log('Erro: ', err)
+    }
+   
+  
   }
+  
 
   return (
     
@@ -46,6 +78,10 @@ export function Register() {
             <Input type='email' placeholder='Digite seu E-mail' name='email' error={errors.email?.message} register={register}/>
 
             <Input type='password' placeholder='Digite sua senha' name='password' error={errors.password?.message} register={register}/>
+
+            { registerError && (
+              <span className='text-red-700'>* {registerError}</span>
+            ) }
 
             <button className="w-full h-12 bg-violet-950 mt-4 rounded text-amber-50 text-lg font-medium cursor-pointer">Salvar</button>
           </form>
