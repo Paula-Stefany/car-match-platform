@@ -1,11 +1,50 @@
 import { AiFillCar } from 'react-icons/ai';
 import { Link } from 'react-router'
 import { FiUser, FiLogIn } from 'react-icons/fi'
+import { useEffect, useState } from 'react';
+import { supabase } from '../../services/supabaseConection';
 
 
 export function Header() {
-    const signed: boolean = false;
-    const loadingAuth: boolean = false;
+    const [signed, setSigned] = useState<boolean>(false);
+    const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
+
+    useEffect(() => {
+
+        async function userSession() {
+            try {
+                const { data, error } = await supabase.auth.getSession();
+
+                if (data.session){
+                    setSigned(true);
+                }
+                if (error){
+                    console.error('Erro: ', error);
+                }
+
+            } catch (error) {
+                console.error(error);
+
+            } finally{
+                setLoadingAuth(false);
+
+            }
+        }
+
+        userSession();
+
+        const authChange = supabase.auth.onAuthStateChange((_event, session) => {
+            setSigned(!!session);
+        });
+
+        const subscription = authChange.data.subscription;
+
+        return () => {
+            subscription.unsubscribe(); 
+        };
+       
+
+    }, [])
 
   return (
     <header className='w-full bg-violet-900 py-6 s'>
