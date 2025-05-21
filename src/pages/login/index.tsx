@@ -48,7 +48,7 @@ export function Login() {
         return;
       }
 
-      navigate('/');
+      navigate('/dashboard');
 
     } catch(err){
       console.error('Erro: ', err);
